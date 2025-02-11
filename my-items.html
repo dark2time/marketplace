@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои товары</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="profile.html">Профиль</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="my-items">
+            <h2>Мои товары</h2>
+            <div id="my-item-cards"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Маркетплейс товаров ручной работы</p>
+    </footer>
+
+    <script src="data.js"></script>
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        if (!currentUser) {
+            alert("Вы должны войти в систему!");
+            window.location.href = "login.html";
+            return;
+        }
+
+        function renderMyItems() {
+            const container = document.getElementById("my-item-cards");
+            container.innerHTML = "";
+
+            const myItems = globalStorage.marketplaceItems.filter(item => item.seller === currentUser.username);
+
+            if (myItems.length === 0) {
+                container.innerHTML = "<p>У вас нет выставленных товаров.</p>";
+                return;
+            }
+
+            myItems.forEach(item => {
+                container.innerHTML += `
+                    <div class="item-card">
+                        <div class="item-images">
+                            <img src="${item.images[0] || 'no-image.jpg'}" alt="${item.title}">
+                        </div>
+                        <h3>${item.title}</h3>
+                        <p>Цена: ${item.price} ₽</p>
+                        <p>Город: ${item.city}</p>
+                        <button class="btn delete-btn" onclick="deleteItem(${item.id})">Удалить</button>
+                    </div>
+                `;
+            });
+        }
+
+        function deleteItem(id) {
+            const confirmDelete = confirm("Вы уверены, что хотите удалить этот товар?");
+            if (confirmDelete) {
+                globalStorage.marketplaceItems = globalStorage.marketplaceItems.filter(item => item.id !== id);
+                saveData();
+                renderMyItems();
+            }
+        }
+
+        renderMyItems();
+    </script>
+</body>
+</html>

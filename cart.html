@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="profile.html">Профиль</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="cart">
+            <h2>Корзина</h2>
+            <div id="cart-items"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Маркетплейс товаров ручной работы</p>
+    </footer>
+
+<script src="data.js"></script>
+<script>
+    // Инициализация текущего пользователя и корзины
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Функция для добавления товара в корзину
+    function addToCart(item) {
+        const existingItem = cart.find(i => i.id === item.id);
+        if (existingItem) {
+            alert("Товар уже в корзине!");
+        } else {
+            cart.push(item);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            alert("Товар успешно добавлен в корзину!");
+        }
+    }
+
+    // Функция для удаления товара
+    function deleteItem(id) {
+        const confirmDelete = confirm("Вы уверены, что хотите удалить этот товар?");
+        if (confirmDelete) {
+            globalStorage.marketplaceItems = globalStorage.marketplaceItems.filter(item => item.id !== id);
+            saveData();
+            renderItems();
+        }
+    }
+
+    // Функция для отображения товаров
+    function renderItems() {
+        const container = document.getElementById("item-cards");
+        container.innerHTML = "";
+
+        globalStorage.marketplaceItems.forEach(item => {
+            container.innerHTML += `
+                <div class="item-card">
+                    <div class="item-images">
+                        <img src="${item.images[0] || 'no-image.jpg'}" alt="${item.title}">
+                    </div>
+                    <h3>${item.title}</h3>
+                    <p>Цена: ${item.price} ₽</p>
+                    <p>Город: ${item.city}</p>
+                    <a href="item-detail.html?id=${item.id}" class="btn">Подробнее</a>
+                    <button class="btn" onclick="addToCart(${JSON.stringify(item)})">Добавить в корзину</button>
+                    ${currentUser && item.seller === currentUser.username
+                        ? `<button class="btn delete-btn" onclick="deleteItem(${item.id})">Удалить</button>`
+                        : ""
+                    }
+                </div>
+            `;
+        });
+    }
+
+    // Настройка видимости ссылок в зависимости от авторизации
+    const addItemLink = document.getElementById("add-item-link");
+    const registerLink = document.getElementById("register-link");
+    const loginLink = document.getElementById("login-link");
+
+    if (!currentUser) {
+        addItemLink.style.display = "none"; // Скрываем ссылку "Добавить товар"
+    } else {
+        registerLink.style.display = "none"; // Скрываем ссылку "Регистрация"
+        loginLink.style.display = "none"; // Скрываем ссылку "Вход"
+    }
+
+    // Запуск отображения товаров при загрузке страницы
+    renderItems();
+</script>
+</body>
+</html>
