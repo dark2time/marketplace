@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали товара</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="profile.html">Профиль</a></li>
+                <li id="login-link"><a href="login.html">Вход</a></li>
+                <li id="register-link"><a href="register.html">Регистрация</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="item-detail">
+            <h2 id="item-title"></h2>
+            <div class="image-slider">
+                <div class="slides" id="image-slides"></div>
+                <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+                <button class="next" onclick="changeSlide(1)">&#10095;</button>
+            </div>
+            <p id="item-description"></p>
+            <p id="item-price"></p>
+            <p id="item-city"></p>
+            <p id="seller-phone"></p>
+            <a href="#" id="chat-link" class="btn">Написать продавцу</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Маркетплейс товаров ручной работы</p>
+    </footer>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const itemId = params.get("id");
+
+        if (!itemId) {
+            alert("Товар не найден!");
+            window.location.href = "index.html";
+            return;
+        }
+
+        let items = JSON.parse(localStorage.getItem("marketplaceItems")) || [];
+        const item = items.find(i => i.id == itemId);
+
+        if (!item) {
+            alert("Товар не найден!");
+            window.location.href = "index.html";
+            return;
+        }
+
+        document.getElementById("item-title").textContent = item.title;
+        document.getElementById("item-description").textContent = `Описание: ${item.description}`;
+        document.getElementById("item-price").textContent = `Цена: ${item.price} ₽`;
+        document.getElementById("item-city").textContent = `Город: ${item.city}`;
+
+        const users = JSON.parse(localStorage.getItem("marketplaceUsers")) || [];
+        const seller = users.find(user => user.username === item.seller);
+
+        if (seller && seller.phone) {
+            document.getElementById("seller-phone").textContent = `Телефон продавца: ${seller.phone}`;
+        } else {
+            document.getElementById("seller-phone").textContent = "Телефон продавца недоступен.";
+        }
+
+        const chatLink = document.getElementById("chat-link");
+        chatLink.href = `chat.html?seller=${item.seller}`;
+
+        const slidesContainer = document.getElementById("image-slides");
+        slidesContainer.innerHTML = item.images.map((img, index) => `
+            <div class="slide ${index === 0 ? 'active' : ''}">
+                <img src="${img}" alt="${item.title}">
+            </div>
+        `).join("");
+
+        let currentSlideIndex = 0;
+
+        function changeSlide(step) {
+            const slides = document.querySelectorAll(".slide");
+            const totalSlides = slides.length;
+
+            slides[currentSlideIndex].classList.remove("active");
+
+            currentSlideIndex = (currentSlideIndex + step + totalSlides) % totalSlides;
+            slides[currentSlideIndex].classList.add("active");
+        }
+    </script>
+</body>
+</html>

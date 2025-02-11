@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="login.html">Вход</a></li>
+                <li><a href="register.html">Регистрация</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="login">
+            <h2>Вход</h2>
+            <form id="login-form">
+                <label for="username">Имя пользователя:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Войти</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Маркетплейс товаров ручной работы</p>
+    </footer>
+
+    <script>
+        document.getElementById("login-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            const users = JSON.parse(localStorage.getItem("marketplaceUsers")) || [];
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                localStorage.setItem("currentUser", JSON.stringify(user));
+                alert("Вы успешно вошли!");
+                window.location.href = "index.html";
+            } else {
+                alert("Неверное имя пользователя или пароль!");
+            }
+        });
+    </script>
+</body>
+</html>

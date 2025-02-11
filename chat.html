@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="profile.html">Профиль</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="chat">
+            <h2>Чат с продавцом</h2>
+            <div id="messages-container" class="messages"></div>
+            <form id="message-form">
+                <input type="text" id="message-input" placeholder="Введите сообщение..." required>
+                <button type="submit">Отправить</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Маркетплейс товаров ручной работы</p>
+    </footer>
+
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const params = new URLSearchParams(window.location.search);
+        const seller = params.get("seller");
+
+        if (!currentUser || !seller) {
+            alert("Вы не авторизованы или не выбран продавец!");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const chatKey = `${currentUser.username}-${seller}`;
+        const messages = JSON.parse(localStorage.getItem(chatKey)) || [];
+
+        function renderMessages() {
+            const container = document.getElementById("messages-container");
+            container.innerHTML = "";
+            messages.forEach(msg => {
+                container.innerHTML += `
+                    <div class="message ${msg.sender === currentUser.username ? 'me' : 'other'}">
+                        <p>${msg.text}</p>
+                    </div>
+                `;
+            });
+        }
+
+        document.getElementById("message-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const messageInput = document.getElementById("message-input");
+            const text = messageInput.value.trim();
+
+            if (text) {
+                messages.push({ sender: currentUser.username, text });
+                localStorage.setItem(chatKey, JSON.stringify(messages));
+                renderMessages();
+                messageInput.value = "";
+            }
+        });
+
+        renderMessages();
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="add-item.html">Добавить товар</a></li>
+                <li><a href="profile.html">Профиль</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="profile">
+            <h2>Мой профиль</h2>
+            <form id="profile-form">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" name="phone" required>
+
+                <label for="city">Город:</label>
+                <input type="text" id="city" name="city" required>
+
+                <button type="submit">Сохранить изменения</button>
+            </form>
+
+            <h3>Мои объявления</h3>
+            <div id="my-items"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Маркетплейс товаров ручной работы</p>
+    </footer>
+
+    <script>
+        const myItems = [
+            { id: 1, title: "Кружка ручной работы", price: 500, city: "Москва", images: ["img1.jpg"] },
+            { id: 2, title: "Шарф ручной работы", price: 1200, city: "Санкт-Петербург", images: ["img2.jpg"] }
+        ];
+
+        function renderMyItems() {
+            const container = document.getElementById("my-items");
+            container.innerHTML = "";
+            myItems.forEach(item => {
+                container.innerHTML += `
+                    <div class="item-card">
+                        <img src="${item.images[0]}" alt="${item.title}">
+                        <h3>${item.title}</h3>
+                        <p>Цена: ${item.price} ₽</p>
+                        <p>Город: ${item.city}</p>
+                        <a href="item-detail.html?id=${item.id}" class="btn">Подробнее</a>
+                    </div>
+                `;
+            });
+        }
+
+        renderMyItems();
+
+        document.getElementById("profile-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            alert("Данные сохранены!");
+        });
+    </script>
+</body>
+</html>
