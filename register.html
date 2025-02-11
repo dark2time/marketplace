@@ -39,34 +39,34 @@
         <p>&copy; 2023 Маркетплейс товаров ручной работы</p>
     </footer>
 
-    <script>
-        document.getElementById("register-form").addEventListener("submit", function (e) {
-            e.preventDefault();
+    <script src="data.js"></script>
+<script>
+    document.getElementById("register-form").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const phone = document.getElementById("phone").value;
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const phone = document.getElementById("phone").value;
 
-            if (!username || !password || !phone) {
-                alert("Заполните все поля!");
-                return;
-            }
+        if (!username || !password || !phone) {
+            alert("Заполните все поля!");
+            return;
+        }
 
-            const users = JSON.parse(localStorage.getItem("marketplaceUsers")) || [];
-            const isUserExists = users.some(u => u.username === username);
+        const isUserExists = globalStorage.marketplaceUsers.some(u => u.username === username);
 
-            if (isUserExists) {
-                alert("Пользователь с таким именем уже существует!");
-                return;
-            }
+        if (isUserExists) {
+            alert("Пользователь с таким именем уже существует!");
+            return;
+        }
 
-            const newUser = { username, password, phone };
-            users.push(newUser);
-            localStorage.setItem("marketplaceUsers", JSON.stringify(users));
+        const newUser = { username, password, phone };
+        globalStorage.marketplaceUsers.push(newUser);
+        saveData();
 
-            alert("Вы успешно зарегистрировались!");
-            window.location.href = "login.html";
-        });
-    </script>
+        alert("Вы успешно зарегистрировались!");
+        window.location.href = "login.html";
+    });
+</script>
 </body>
 </html>
