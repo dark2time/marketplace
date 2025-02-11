@@ -35,48 +35,52 @@
         <p>&copy; 2023 Маркетплейс товаров ручной работы</p>
     </footer>
 
-    <script>
-        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        const addItemLink = document.getElementById("add-item-link");
-        const registerLink = document.getElementById("register-link");
-        const loginLink = document.getElementById("login-link");
+<script src="data.js"></script>
+<script>
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    const addItemLink = document.getElementById("add-item-link");
+    const registerLink = document.getElementById("register-link");
+    const loginLink = document.getElementById("login-link");
 
-        if (!currentUser) {
-            addItemLink.style.display = "none"; // Скрываем ссылку "Добавить товар"
-        } else {
-            registerLink.style.display = "none"; // Скрываем ссылку "Регистрация"
-            loginLink.style.display = "none"; // Скрываем ссылку "Вход"
-        }
+    if (!currentUser) {
+        addItemLink.style.display = "none"; // Скрываем ссылку "Добавить товар"
+    } else {
+        registerLink.style.display = "none"; // Скрываем ссылку "Регистрация"
+        loginLink.style.display = "none"; // Скрываем ссылку "Вход"
+    }
 
-        let items = JSON.parse(localStorage.getItem("marketplaceItems")) || [];
-
-        function renderItems() {
-            const container = document.getElementById("item-cards");
-            container.innerHTML = "";
-            items.forEach(item => {
-                container.innerHTML += `
-                    <div class="item-card">
-                        <div class="item-images">
-                            <img src="${item.images[0]}" alt="${item.title}">
-                        </div>
-                        <h3>${item.title}</h3>
-                        <p>Цена: ${item.price} ₽</p>
-                        <p>Город: ${item.city}</p>
-                        <a href="item-detail.html?id=${item.id}" class="btn">Подробнее</a>
+    function renderItems() {
+        const container = document.getElementById("item-cards");
+        container.innerHTML = "";
+        globalStorage.marketplaceItems.forEach(item => {
+            container.innerHTML += `
+                <div class="item-card">
+                    <div class="item-images">
+                        <img src="${item.images[0] || 'no-image.jpg'}" alt="${item.title}">
                     </div>
-                `;
-            });
-        }
+                    <h3>${item.title}</h3>
+                    <p>Цена: ${item.price} ₽</p>
+                    <p>Город: ${item.city}</p>
+                    <a href="item-detail.html?id=${item.id}" class="btn">Подробнее</a>
+                    ${currentUser && item.seller === currentUser.username
+                        ? `<button class="btn delete-btn" onclick="deleteItem(${item.id})">Удалить</button>`
+                        : ""
+                    }
+                </div>
+            `;
+        });
+    }
 
-        function sortItems(field, order) {
-            items.sort((a, b) => {
-                if (order === "asc") return a[field] - b[field];
-                else return b[field] - a[field];
-            });
+    function deleteItem(id) {
+        const confirmDelete = confirm("Вы уверены, что хотите удалить этот товар?");
+        if (confirmDelete) {
+            globalStorage.marketplaceItems = globalStorage.marketplaceItems.filter(item => item.id !== id);
+            saveData();
             renderItems();
         }
+    }
 
-        renderItems();
-    </script>
+    renderItems();
+</script>
 </body>
 </html>
